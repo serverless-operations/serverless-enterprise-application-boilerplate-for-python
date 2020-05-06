@@ -41,7 +41,7 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/workspace
-      - run: *install_sls
+      #- run: *install_sls
       - run:
           name: Lint
           command: yarn lint
