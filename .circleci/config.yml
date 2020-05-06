@@ -33,8 +33,7 @@ jobs:
       - persist_to_workspace:
           root: ~/workspace
           paths:
-            - ./*
-            - $HOME/*
+            - /*
   lint:
     executor:
       name: default
