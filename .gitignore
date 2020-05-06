@@ -19,6 +19,7 @@ node_modules
 .DS_Store
 __pycache__
 .envrc
+.pytest_cache
 
 # Serverless directories
 .serverless

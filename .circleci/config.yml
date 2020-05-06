@@ -1,9 +1,11 @@
-version: 2
+version: 2.1
+
 executors:
   default:
     working_directory: ~/workspace
     docker:
-      - image: lambci/lambda:build-python3.7
+      - image: lambci/lambda:build-python3.8
+
 references:
   commands:
     install_sls: &install_sls
