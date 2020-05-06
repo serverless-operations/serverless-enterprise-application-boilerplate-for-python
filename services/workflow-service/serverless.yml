@@ -1,0 +1,74 @@
+service: workflow
+
+provider:
+  name: aws
+  region: ${file(serverless-common.yml):region}
+  stage: ${file(serverless-common.yml):stage}
+  runtime: ${file(serverless-common.yml):runtime}
+  memorySize: ${file(serverless-common.yml):memorySize.${self:provider.stage}, file(serverless-common.yml):memorySize.default}
+  deploymentBucket:
+    name: ${file(serverless-common.yml):appname}.${file(serverless-common.yml):deploymentBucketPath.${self:provider.stage}, file(serverless-common.yml):deploymentBucketPath.default}.${self:provider.region}.deploys
+  timeout: 900
+  logRetentionInDays: ${file(serverless-common.yml):logRetentionInDays.${self:provider.stage}, file(serverless-common.yml):logRetentionInDays.default}
+  versionFunctions: false
+
+functions:
+  hello:
+    handler: services/workflow-service/hello.handler
+    layers:
+      - ${cf:python-layer-${self:provider.stage}.PythonRequirementsLambdaLayerQualifiedArn}
+      - ${cf:python-layer-${self:provider.stage}.LibLambdaLayerQualifiedArn}
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:DescribeTable
+          - dynamodb:GetItem
+        Resource:
+          - ${cf:db-${self:provider.stage}.ExampleTableArn}
+    environment:
+      TABLE_NAME: ${cf:db-${self:provider.stage}.ExampleTableName}
+
+stepFunctions:
+  validate: true
+  stateMachines:
+    myStateMachine:
+      name: myStateMachine-${self:provider.stage}
+      loggingConfig:
+        level: ERROR
+        includeExecutionData: true
+        destinations:
+          - Fn::GetAtt: [MyStateMachineLogGroup, Arn]
+      definition:
+        StartAt: FirstState
+        States:
+          FirstState:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [hello, Arn]
+            End: true
+
+resources:
+  Outputs:
+    MyStateMachine:
+      Value:
+        Ref: MyStateMachineDash${self:provider.stage}
+  Resources:
+    MyStateMachineLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        LogGroupName: /aws/states/MyStateMachine-${self:provider.stage}
+        RetentionInDays: ${self:provider.logRetentionInDays}
+
+package:
+  exclude:
+    - "**"
+  include:
+    - "services/workflow-service/**"
+
+plugins:
+  - serverless-step-functions
+  - serverless-iam-roles-per-function
+
+custom:
+  serverless-iam-roles-per-function:
+    defaultInherit: true

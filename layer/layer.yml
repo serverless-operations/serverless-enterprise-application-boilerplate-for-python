@@ -1,0 +1,32 @@
+service: python-layer
+
+provider:
+  name: aws
+  region: ${file(serverless-common.yml):region}
+  stage: ${file(serverless-common.yml):stage}
+  runtime: ${file(serverless-common.yml):runtime}
+  memorySize: ${file(serverless-common.yml):memorySize.${self:provider.stage}, file(serverless-common.yml):memorySize.default}
+  deploymentBucket:
+    name: ${file(serverless-common.yml):appname}.${file(serverless-common.yml):deploymentBucketPath.${self:provider.stage}, file(serverless-common.yml):deploymentBucketPath.default}.${self:provider.region}.deploys
+
+custom:
+  dockerizePipDefault: false
+  pythonRequirements:
+    layer:
+      name: ${self:provider.stage}-python-requirements
+      description: Python requirements lambda layer
+      compatibleRuntimes:
+        - ${self:provider.runtime}
+    fileName: layer/requirements.txt
+    dockerizePip: ${opt:dockerizePip, self:custom.dockerizePipDefault}
+
+layers:
+  lib:
+    path: lib
+    name: ${self:provider.stage}-lib
+    description: libraries for this project
+    compatibleRuntimes:
+      - ${self:provider.runtime}
+
+plugins:
+  - serverless-python-requirements

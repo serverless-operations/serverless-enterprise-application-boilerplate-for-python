@@ -1,0 +1,59 @@
+version: 2
+executors:
+  default:
+    working_directory: ~/workspace
+    docker:
+      - image: lambci/lambda:build-python3.7
+references:
+  commands:
+    install_sls: &install_sls
+      name: Install Serverless
+      command: |
+        #apt-get install curl
+        curl -sL https://rpm.nodesource.com/setup_10.x | bash -
+        yum install -y nodejs
+        npm install npm@latest -g
+        npm install
+    install_dependencies: &install_dependencies
+      name: Install dependencies
+      command: |
+        python3 -m venv venv
+        . venv/bin/activate
+        pip install -r requirements.txt
+
+jobs:
+  setup:
+    executor:
+      name: default
+    steps:
+      - checkout
+      - run: *install_sls
+      - run: *install_dependencies
+      - persist_to_workspace:
+          root: ~/workspace
+          paths:
+            - ./*
+  lint:
+    executor:
+      name: default
+    steps:
+      - attach_workspace:
+          at: ~/workspace
+      - run:
+          name: Lint
+          command: yarn lint
+
+workflows:
+  version: 2
+  build-deploy-flow:
+    jobs:
+      - setup:
+          filters:
+            tags:
+              only: /.*/
+      - lint:
+          requires:
+            - setup
+          filters:
+            tags:
+              only: /.*/

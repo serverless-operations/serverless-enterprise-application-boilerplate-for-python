@@ -1,0 +1,18 @@
+service: ssm
+
+provider:
+  name: aws
+  region: ${file(serverless-common.yml):region}
+  stage: ${file(serverless-common.yml):stage}
+  deploymentBucket:
+    name: ${file(serverless-common.yml):appname}.${file(serverless-common.yml):deploymentBucketPath.${self:provider.stage}, file(serverless-common.yml):deploymentBucketPath.default}.${self:provider.region}.deploys
+
+resources:
+  Resources:
+    ExampleSecretValue:
+      Type: AWS::SSM::Parameter
+      Properties:
+        Name: example-${self:provider.stage}
+        Description: An example secret value
+        Type: String
+        Value: ${env:EXAMPLE_SECRET_VALUE, ''}

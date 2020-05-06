@@ -1,0 +1,5 @@
+export PYTHONPATH=$PWD
+export AWS_DEFAULT_REGION=us-east-1
+export AWS_ACCESS_KEY_ID=xxxxxx
+export AWS_SECRET_ACCESS_KEY=yyyyyy
+export STAGE=dev

@@ -1,0 +1,71 @@
+service: stream
+
+provider:
+  name: aws
+  region: ${file(serverless-common.yml):region}
+  stage: ${file(serverless-common.yml):stage}
+  runtime: ${file(serverless-common.yml):runtime}
+  memorySize: ${file(serverless-common.yml):memorySize.${self:provider.stage}, file(serverless-common.yml):memorySize.default}
+  deploymentBucket:
+    name: ${file(serverless-common.yml):appname}.${file(serverless-common.yml):deploymentBucketPath.${self:provider.stage}, file(serverless-common.yml):deploymentBucketPath.default}.${self:provider.region}.deploys
+  timeout: 900
+  logRetentionInDays: ${file(serverless-common.yml):logRetentionInDays.${self:provider.stage}, file(serverless-common.yml):logRetentionInDays.default}
+  versionFunctions: false
+
+functions:
+  dbStream:
+    handler: services/stream-service/dds.handler
+    events:
+      - stream:
+          arn: ${cf:db-${self:provider.stage}.ExampleTableStreamArn}
+          batchSize: 100
+          startingPosition: LATEST
+    layers:
+      - ${cf:python-layer-${self:provider.stage}.PythonRequirementsLambdaLayerQualifiedArn}
+      - ${cf:python-layer-${self:provider.stage}.LibLambdaLayerQualifiedArn}
+    environment:
+      STREAM_NAME:
+        Ref: MyStream
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - kinesis:PutRecord
+        Resource:
+          Fn::GetAtt:
+            - MyStream
+            - Arn
+  kinesisStream:
+    handler: services/stream-service/kinesis.handler
+    events:
+      - stream:
+          type: kinesis
+          batchSize: 100
+          arn:
+            Fn::GetAtt:
+              - MyStream
+              - Arn
+    layers:
+      - ${cf:python-layer-${self:provider.stage}.PythonRequirementsLambdaLayerQualifiedArn}
+      - ${cf:python-layer-${self:provider.stage}.LibLambdaLayerQualifiedArn}
+
+resources:
+  Resources:
+    MyStream:
+      Type: AWS::Kinesis::Stream
+      Properties:
+        ShardCount: 1
+        Name: ${self:service}-${self:provider.stage}-mystream
+
+package:
+  exclude:
+    - "**"
+  include:
+    - "services/stream-service/**"
+
+custom:
+  serverless-iam-roles-per-function:
+    defaultInherit: true
+
+plugins:
+  modules:
+    - serverless-iam-roles-per-function

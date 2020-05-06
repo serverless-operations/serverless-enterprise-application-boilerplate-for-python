@@ -1,0 +1,111 @@
+service: message
+
+provider:
+  name: aws
+  region: ${file(serverless-common.yml):region}
+  stage: ${file(serverless-common.yml):stage}
+  runtime: ${file(serverless-common.yml):runtime}
+  memorySize: ${file(serverless-common.yml):memorySize.${self:provider.stage}, file(serverless-common.yml):memorySize.default}
+  deploymentBucket:
+    name: ${file(serverless-common.yml):appname}.${file(serverless-common.yml):deploymentBucketPath.${self:provider.stage}, file(serverless-common.yml):deploymentBucketPath.default}.${self:provider.region}.deploys
+  timeout: 900
+  logRetentionInDays: ${file(serverless-common.yml):logRetentionInDays.${self:provider.stage}, file(serverless-common.yml):logRetentionInDays.default}
+  versionFunctions: false
+
+functions:
+  worker:
+    handler: services/message-service/worker.handler
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - WorkerQueue
+              - Arn
+    layers:
+      - ${cf:python-layer-${self:provider.stage}.PythonRequirementsLambdaLayerQualifiedArn}
+      - ${cf:python-layer-${self:provider.stage}.LibLambdaLayerQualifiedArn}
+    environment:
+      EVENT_SOURCE: test.action
+      EVENT_BUS_NAME: ${self:custom.eventBusName}
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - events:PutEvents
+        Resource:
+          - arn:aws:events:#{AWS::Region}:#{AWS::AccountId}:event-bus/${self:custom.eventBusName}
+  eventbus:
+    handler: services/message-service/eventbus.handler
+    events:
+      - eventBridge:
+          eventBus: arn:aws:events:#{AWS::Region}:#{AWS::AccountId}:event-bus/${self:custom.eventBusName}
+          pattern:
+            source:
+              - test.action
+    layers:
+      - ${cf:python-layer-${self:provider.stage}.PythonRequirementsLambdaLayerQualifiedArn}
+      - ${cf:python-layer-${self:provider.stage}.LibLambdaLayerQualifiedArn}
+    destinations:
+      onSuccess: arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.notificationTopicName}
+      onFailure: arn:aws:sqs:#{AWS::Region}:#{AWS::AccountId}:${self:custom.errorEventBusQueueName}
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - sqs:SendMessage
+        Resource:
+          Fn::GetAtt:
+              - ErrorEventBusQueue
+              - Arn
+      - Effect: Allow
+        Action:
+          - sns:Publish
+        Resource: !Ref Notification
+          
+
+resources:
+  Resources:
+    Notification:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:custom.notificationTopicName}
+    EventBus:
+      Type: AWS::Events::EventBus
+      Properties: 
+        Name: ${self:custom.eventBusName}
+    WorkerQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:provider.stage}-worker.fifo
+        VisibilityTimeout: 901
+        FifoQueue: true
+        RedrivePolicy:
+          deadLetterTargetArn:
+            Fn::GetAtt:
+              - ErrorWorkerQueue
+              - Arn
+          maxReceiveCount: 2
+    ErrorWorkerQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:provider.stage}-worker-error.fifo
+        FifoQueue: true
+    ErrorEventBusQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:custom.errorEventBusQueueName}
+
+package:
+  exclude:
+    - "**"
+  include:
+    - "services/message-service/**"
+
+custom:
+  serverless-iam-roles-per-function:
+    defaultInherit: true
+  eventBusName: ${self:provider.stage}-eventBus
+  errorEventBusQueueName: ${self:provider.stage}-event-bus-error
+  notificationTopicName: ${self:provider.stage}-notification
+
+plugins:
+  - serverless-iam-roles-per-function
+  - serverless-pseudo-parameters

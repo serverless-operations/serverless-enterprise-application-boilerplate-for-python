@@ -1,0 +1,13 @@
+appname: myapp
+runtime: python3.8
+logRetentionInDays:
+  prod: 90 # 90 days in [prod] stage
+  default: 3 # 3 days in other stages
+memorySize:
+  prod: 512
+  default: 128
+stage: ${env:STAGE}
+region: ${env:AWS_DEFAULT_REGION}
+deploymentBucketPath:
+  prod: prod
+  default: dev

@@ -1,0 +1,52 @@
+service: api
+
+provider:
+  name: aws
+  region: ${file(serverless-common.yml):region}
+  stage: ${file(serverless-common.yml):stage}
+  runtime: ${file(serverless-common.yml):runtime}
+  memorySize: ${file(serverless-common.yml):memorySize.${self:provider.stage}, file(serverless-common.yml):memorySize.default}
+  deploymentBucket:
+    name: ${file(serverless-common.yml):appname}.${file(serverless-common.yml):deploymentBucketPath.${self:provider.stage}, file(serverless-common.yml):deploymentBucketPath.default}.${self:provider.region}.deploys
+  timeout: 30
+  logRetentionInDays: ${file(serverless-common.yml):logRetentionInDays.${self:provider.stage}, file(serverless-common.yml):logRetentionInDays.default}
+  versionFunctions: false
+  logs:
+    restApi:
+      accessLogging: true
+      format: "requestId: $context.requestId"
+      executionLogging: true
+      level: INFO
+      fullExecutionData: true
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:BatchGetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:BatchWriteItem
+      Resource:
+        - ${cf:db-${self:provider.stage}.ExampleTableArn}
+
+package:
+  exclude:
+    - "**"
+  include:
+    - "services/api/**"
+
+functions:
+  hello:
+    handler: services/api/hello.handler
+    events:
+      - http:
+          path: /hello
+          method: get
+          cors: true
+    layers:
+      - ${cf:python-layer-${self:provider.stage}.PythonRequirementsLambdaLayerQualifiedArn}
+      - ${cf:python-layer-${self:provider.stage}.LibLambdaLayerQualifiedArn}
