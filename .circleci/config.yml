@@ -15,6 +15,7 @@ references:
         yum install -y nodejs
         curl -o- -L https://yarnpkg.com/install.sh | bash
         export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+        yarn install
     install_dependencies: &install_dependencies
       name: Install dependencies
       command: |
@@ -28,6 +29,7 @@ jobs:
       name: default
     steps:
       - checkout
+      - run: *install_sls
       - run: *install_dependencies
       - persist_to_workspace:
           root: ~/workspace
