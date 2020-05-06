@@ -28,18 +28,18 @@ jobs:
       name: default
     steps:
       - checkout
-      - run: *install_sls
       - run: *install_dependencies
       - persist_to_workspace:
           root: ~/workspace
           paths:
-            - /*
+            - ./*
   lint:
     executor:
       name: default
     steps:
       - attach_workspace:
           at: ~/workspace
+      - run: *install_sls
       - run:
           name: Lint
           command: yarn lint
