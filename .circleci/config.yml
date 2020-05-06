@@ -11,11 +11,9 @@ references:
     install_sls: &install_sls
       name: Install Serverless
       command: |
-        #apt-get install curl
         curl -sL https://rpm.nodesource.com/setup_10.x | bash -
         yum install -y nodejs
-        npm install npm@latest -g
-        npm install
+        curl -o- -L https://yarnpkg.com/install.sh | bash
     install_dependencies: &install_dependencies
       name: Install dependencies
       command: |
