@@ -153,7 +153,10 @@ workflows:
   version: 2
   build-flow:
     jobs:
-      - build
+      - build:
+          filters:
+            tags:
+              only: /.*/
       - lint:
           requires:
             - build
