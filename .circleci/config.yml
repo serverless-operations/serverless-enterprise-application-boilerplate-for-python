@@ -22,9 +22,6 @@ references:
         . venv/bin/activate
         pip install -r requirements-dev.txt
         yarn install
-    activate_venv: &activate_venv
-      name: Activate venv
-      command: . venv/bin/activate
 
 jobs:
   setup:
@@ -45,7 +42,7 @@ jobs:
       - attach_workspace:
           at: ~/workspace
       - run: *install_sls
-      - run: *activate_venv
+      - run: *install_dependencies
       - run:
           name: Lint
           command: yarn lint
