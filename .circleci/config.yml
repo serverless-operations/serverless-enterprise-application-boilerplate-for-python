@@ -108,6 +108,46 @@ jobs:
             yarn test:workflow
           environment:
             STAGE: 2
+  deploy_staging:
+    executor:
+      name: default
+    steps:
+      - attach_workspace:
+          at: ~/workspace
+      - run: *install_sls
+      - run:
+          name: Deploy services to staging
+          command: |
+            . venv/bin/activate
+            yarn deploy:db
+            yarn deploy:s3
+            yarn deploy:layer
+            yarn deploy:workflow
+            yarn deploy:api
+            yarn deploy:stream
+            yarn deploy:message
+          environment:
+            STAGE: staging
+  deploy_prod:
+    executor:
+      name: default
+    steps:
+      - attach_workspace:
+          at: ~/workspace
+      - run: *install_sls
+      - run:
+          name: Deploy services to prod
+          command: |
+            . venv/bin/activate
+            yarn deploy:db
+            yarn deploy:s3
+            yarn deploy:layer
+            yarn deploy:workflow
+            yarn deploy:api
+            yarn deploy:stream
+            yarn deploy:message
+          environment:
+            STAGE: prod
 
 workflows:
   version: 2
@@ -135,9 +175,26 @@ workflows:
           filters:
             tags:
               only: /.*/
+          context: dev
       - workflow_test:
           requires:
             - unit_test
           filters:
             tags:
               only: /.*/
+          context: dev
+      - deploy_staging:
+          filters:
+            branches:
+              only: master
+          requires:
+            - workflow_test
+            - api_test
+          context: dev
+      - deploy_prod:
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore: /.*/
+          context: prod
