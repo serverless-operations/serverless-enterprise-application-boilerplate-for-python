@@ -47,6 +47,18 @@ jobs:
           command: |
             . venv/bin/activate
             yarn lint
+  unit_test:
+    executor:
+      name: default
+    steps:
+      - attach_workspace:
+          at: ~/workspace
+      - run: *install_sls
+      - run:
+          name: Run Unit Test
+          command: |
+            . venv/bin/activate
+            yarn test:unit
 
 workflows:
   version: 2
