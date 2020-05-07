@@ -151,7 +151,7 @@ jobs:
 
 workflows:
   version: 2
-  build-deploy-flow:
+  build-flow:
     jobs:
       - build
       - lint:
@@ -176,12 +176,18 @@ workflows:
             - workflow_test
             - api_test
           context: dev
+  build-deploy-flow:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/
       - deploy_prod:
           requires:
             - build
           filters:
             tags:
-              only: /^.*/
+              only: /.*/
             branches:
               ignore: /.*/
           context: prod
