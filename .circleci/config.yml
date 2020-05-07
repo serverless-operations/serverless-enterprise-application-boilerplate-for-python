@@ -156,7 +156,7 @@ workflows:
       - build:
       - lint:
           requires:
-            - setup
+            - build
       - unit_test:
           requires:
             - lint
@@ -178,7 +178,7 @@ workflows:
           context: dev
       - deploy_prod:
           requires:
-            - setup
+            - build
           filters:
             tags:
               only: /.*/
