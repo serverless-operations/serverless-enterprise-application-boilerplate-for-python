@@ -74,3 +74,9 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - unit_test:
+          requires:
+            - lint
+          filters:
+            tags:
+              only: /.*/
