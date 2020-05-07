@@ -181,7 +181,7 @@ workflows:
             - build
           filters:
             tags:
-              only: /release-.*/
+              only: /^release-.*/
             branches:
               ignore: /.*/
           context: prod
