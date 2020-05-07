@@ -181,7 +181,7 @@ workflows:
             - build
           filters:
             tags:
-              only: /.*/
+              only: /^.*/
             branches:
               ignore: /.*/
           context: prod
