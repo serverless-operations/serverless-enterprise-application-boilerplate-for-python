@@ -5,6 +5,8 @@ executors:
     working_directory: ~/workspace
     docker:
       - image: lambci/lambda:build-python3.8
+    environment:
+      PYTHONPATH: ./
 
 references:
   commands:
