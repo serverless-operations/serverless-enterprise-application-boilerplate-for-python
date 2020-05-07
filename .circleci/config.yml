@@ -154,34 +154,19 @@ workflows:
   build-deploy-flow:
     jobs:
       - setup:
-          filters:
-            tags:
-              only: /.*/
       - lint:
           requires:
             - setup
-          filters:
-            tags:
-              only: /.*/
       - unit_test:
           requires:
             - lint
-          filters:
-            tags:
-              only: /.*/
       - api_test:
           requires:
             - unit_test
-          filters:
-            tags:
-              only: /.*/
           context: dev
       - workflow_test:
           requires:
             - unit_test
-          filters:
-            tags:
-              only: /.*/
           context: dev
       - deploy_staging:
           filters:
@@ -192,6 +177,8 @@ workflows:
             - api_test
           context: dev
       - deploy_prod:
+          requires:
+            - setup
           filters:
             tags:
               only: /.*/
