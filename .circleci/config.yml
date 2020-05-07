@@ -96,6 +96,7 @@ jobs:
           command: |
             . venv/bin/activate
             yarn deploy:db
+            yarn deploy:s3
             yarn deploy:layer
             yarn deploy:workflow
           environment:
