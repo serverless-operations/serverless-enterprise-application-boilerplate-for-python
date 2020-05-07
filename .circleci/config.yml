@@ -18,7 +18,6 @@ references:
     install_dependencies: &install_dependencies
       name: Install dependencies
       command: |
-        export PYTHONPATH=./
         python3 -m venv venv
         . venv/bin/activate
         pip install -r requirements-dev.txt
@@ -43,10 +42,11 @@ jobs:
       - attach_workspace:
           at: ~/workspace
       - run: *install_sls
-      - run: *install_dependencies
       - run:
           name: Lint
-          command: yarn lint
+          command: |
+            . venv/bin/activate
+            yarn lint
 
 workflows:
   version: 2
