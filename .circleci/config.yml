@@ -176,18 +176,12 @@ workflows:
             - workflow_test
             - api_test
           context: dev
-  build-deploy-flow:
-    jobs:
-      - build:
-          filters:
-            tags:
-              only: /.*/
       - deploy_prod:
           requires:
             - build
           filters:
             tags:
-              only: /aa-.*/
+              only: /release-.*/
             branches:
               ignore: /.*/
           context: prod
