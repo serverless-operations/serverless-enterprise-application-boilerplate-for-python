@@ -1,8 +1,8 @@
 # Serverless Enterprise Application Boilerplate For Python
-This is a boilerplate to build an AWS serverless enterprise application. In general, a serverless application is composed of some CloudFormation stacks. This repository shows you all the things which build that like how to separate each stack and build a directory structure with using Serverless Framework, Python and CircleCI.
+This is a boilerplate to build an AWS serverless enterprise application. In general, a serverless application is composed of some CloudFormation stacks. This repository shows you all the things which build that like how to separate each stack and build a directory structure using Serverless Framework, Python, and CircleCI.
 
 ## Deploy image
-Deploy apps to AWS with using Serverless Framework via CircleCI.
+Deploy apps to AWS using Serverless Framework via CircleCI.
 
 <img src="https://raw.githubusercontent.com/serverless-operations/serverless-enterprise-application-boilerplate-for-python/master/service.png" alt="Architecture" width="50%;">
 
@@ -10,8 +10,8 @@ Deploy apps to AWS with using Serverless Framework via CircleCI.
 
 | Directory | Description |
 |:---|:---|
-|layer |Lambda layers. Put Python external libraries and common libraries which can use each service. |
-|lib |Common libraries which can use each service. |
+|layer |Lambda layers. Put Python external libraries and common libraries that can use each service. |
+|lib |Common libraries that can use each service. |
 |services/api |API Service which a part of this application. Here is [the architecture](https://github.com/serverless-operations/serverless-enterprise-application-boilerplate-for-python/tree/master/services/api) |
 |services/workflow |API Service which a part of this application. Here is [the architecture](https://github.com/serverless-operations/serverless-enterprise-application-boilerplate-for-python/tree/master/services/workflow-service) |
 |services/message-service |Message Service which a part of this application. Here is [the architecture](https://github.com/serverless-operations/serverless-enterprise-application-boilerplate-for-python/tree/master/services/message-service) |
@@ -60,7 +60,12 @@ $ . venv/bin/activate
 $ pip3 install -r requirements.txt
 ```
 
-Run deploy api to see this setup successfully.
+Run deploy API to see this setup successfully.
 ```
 $ yarn deploy:api
 ```
+
+## AWS Account
+
+This boilerplate supposes to use two AWS accounts, which are for production and other than that.
+You can switch AWS accounts to deploy using the CircleCI context feature.
