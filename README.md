@@ -19,6 +19,18 @@ Deploy apps to AWS with using Serverless Framework via CircleCI.
 |tests/unit_tests |Put unit tests. |
 |tests/integration_tests |Put E2E tests. |
 
+## Commands
 
+All commands you need to build this application is defined as yarn script.
+Here is a part of that.
+| Command | Description |
+|:---|:---|
+| yarn lint | Run lint with flake8. |
+| yarn test:unit | Run unit testing. |
+| yarn test:workflow | Run E2E testing for workflow service. |
+| yarn deploy:workflow | Deploy workflow service. |
+| yarn deploy:db | Deploy tables. |
+
+All commands are defined in [package.json](https://github.com/serverless-operations/serverless-enterprise-application-boilerplate-for-python/blob/master/package.json). See that.
 
 ## Setup
