@@ -69,3 +69,5 @@ $ yarn deploy:api
 
 This boilerplate supposes to use two AWS accounts, which are for production and other than that.
 You can switch AWS accounts to deploy using the CircleCI context feature.
+
+<img src="https://raw.githubusercontent.com/serverless-operations/serverless-enterprise-application-boilerplate-for-python/master/accounts.png" alt="Accounts" width="50%;">
