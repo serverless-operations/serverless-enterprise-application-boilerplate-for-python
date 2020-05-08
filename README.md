@@ -34,3 +34,26 @@ Here is a part of that.
 All commands are defined in [package.json](https://github.com/serverless-operations/serverless-enterprise-application-boilerplate-for-python/blob/master/package.json). See that.
 
 ## Setup
+
+Checkout source code.
+```
+$ git clone git@github.com:serverless-operations/serverless-enterprise-application-boilerplate-for-python.git
+$ cd serverless-enterprise-application-boilerplate-for-python
+$ yarn install
+```
+
+Setup needed environment valiables  via `direnv`.
+```
+$ cp -pr .envrc.sample .envrc
+$ vi .envrc # edit
+
+# allow
+$ direnv allow
+```
+
+Install Python external libraries to develop into `venv`.
+```
+$ python3 -m venv venv
+$ . venv/bin/activate
+$ pip3 install -r requirements.txt
+```
