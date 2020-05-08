@@ -4,7 +4,7 @@
 This is a boilerplate to build an AWS serverless enterprise application. In general, a serverless application is composed of some CloudFormation stacks. This repository shows you all the things which build that like how to separate each stack and build a directory structure using Serverless Framework, Python, and CircleCI.
 
 ## Deploy image
-Deploy apps to AWS using Serverless Framework via CircleCI.
+Deploy this app to AWS using Serverless Framework via CircleCI.
 
 <img src="https://raw.githubusercontent.com/serverless-operations/serverless-enterprise-application-boilerplate-for-python/master/service.png" alt="Architecture" width="50%;">
 
@@ -59,7 +59,7 @@ Install Python external libraries to develop into `venv`.
 ```
 $ python3 -m venv venv
 $ . venv/bin/activate
-$ pip3 install -r requirements.txt
+$ pip3 install -r requirements-dev.txt
 ```
 
 Run deploy API to see this setup successfully.
