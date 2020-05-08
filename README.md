@@ -57,3 +57,8 @@ $ python3 -m venv venv
 $ . venv/bin/activate
 $ pip3 install -r requirements.txt
 ```
+
+Run deploy api to see this setup successfully.
+```
+$ yarn deploy:api
+```
