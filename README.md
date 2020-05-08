@@ -4,4 +4,4 @@ This is a boilerplate to build an AWS serverless enterprise application. In gene
 ## Deploy image
 Deploy apps to AWS with using Serverless Framework via CircleCI.
 
-<img src="https://raw.githubusercontent.com/serverless-operations/serverless-enterprise-application-boilerplate-for-python/master/service.png" alt="Architecture" style="max-width:50%;">
+<img src="https://raw.githubusercontent.com/serverless-operations/serverless-enterprise-application-boilerplate-for-python/master/service.png" alt="Architecture" width="50%;">
