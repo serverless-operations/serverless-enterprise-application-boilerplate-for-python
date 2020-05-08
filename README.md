@@ -35,10 +35,12 @@ All commands are defined in [package.json](https://github.com/serverless-operati
 
 ## Setup
 
-Checkout source code.
+You can use this boilerplate as a skeleton to build your serverless application. First, check out the code and remove `.git` directory so that you can put it in your repository.
+
 ```
 $ git clone git@github.com:serverless-operations/serverless-enterprise-application-boilerplate-for-python.git
 $ cd serverless-enterprise-application-boilerplate-for-python
+$ rm -rf .git
 $ yarn install
 ```
 
