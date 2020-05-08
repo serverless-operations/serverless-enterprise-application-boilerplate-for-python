@@ -1,5 +1,5 @@
 
-# Stream Service
+# Workflow Service
 
 This is a workflow service example with StepFunctions. 
 
