@@ -62,7 +62,7 @@ $ . venv/bin/activate
 $ pip3 install -r requirements-dev.txt
 ```
 
-Create a deployment bucket to your AWS account with following schema. There valiables are defined in `serverless-common.yml`
+Create a deployment S3 bucket to your AWS account with following schema. There valiables are defined in `serverless-common.yml`
 ```
 <appname>.<deploymentBucketPath(stage)>.<region>.deploys
 ```
